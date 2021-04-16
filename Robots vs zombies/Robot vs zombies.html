@@ -1,0 +1,110 @@
+<script src="http://koda.nu/simple.js">
+ 
+// en lista för zombies och säger att zombies dödade när man börjar är 0.
+    var zombies = [];
+    var zombiesKilled = 0;
+    
+    // gör zombisen och ger dem random spawn locations och även snabbhet.
+    function Zombie()
+    {
+      this.x = random(totalWidth);
+      this.y = random(totalHeight);
+      this.speed = random(2,3);
+      this.dead  = false;
+  
+      this.update = function()
+      {
+        var xSpeed = (player.x-this.x)*this.speed/distance(this,player);
+        var ySpeed = (player.y-this.y)*this.speed/distance(this,player);
+        this.x += xSpeed;
+        this.y += ySpeed;
+      
+        // bild för zombien (lite stor men fungerar med stor skärm)
+        picture(this.x-50, this.y-20, "https://static.wixstatic.com/media/2cd43b_4ef2e757b4b54dcca8cb88f2426560a2~mv2.png/v1/fill/w_138,h_284,fp_0.50_0.50/2cd43b_4ef2e757b4b54dcca8cb88f2426560a2~mv2.png");    
+      };
+    }
+    // gjorde om musen till ett sikte.
+    function crosshair()
+    {
+      ring(mouse.x, mouse.y, 20, 3, "red");
+      line(mouse.x - 15, mouse.y, mouse.x - 3, mouse.y, 1, "red");
+      line(mouse.x + 15, mouse.y, mouse.x + 3, mouse.y, 1, "red");
+      line(mouse.x, mouse.y - 15, mouse.x, mouse.y - 3, 1, "red");
+      line(mouse.x, mouse.y + 15, mouse.x, mouse.y + 3, 1, "red");
+    }
+    
+    // man ska inte bara kunna sikta utan även skjuta med space.
+    function gunshot()
+    {
+      save();
+      translate(mouse.x, mouse.y);
+      circle(0, 0, 2, "yellow");
+      for (var i = 0; i < 10; i++)
+      {
+        rotate(random(360));
+        circle(random(20), 0, random(20/5), "yellow");
+      }
+      restore(); 
+    }
+    
+    hideMouse();
+ 
+//  gör en spawn för den man styr med piltangenter
+    var player = {x: 350, y: 350};
+ 
+    function update()
+    {
+      fill("black");
+        // Gör så att playern kan röra sig
+      if (keyboard.a)
+        player.x -= 5;
+        if (keyboard.d)
+        player.x += 5;
+       if (keyboard.s)
+        player.y += 5;
+        if (keyboard.w)
+        player.y -= 5;
+ 
+        picture(player.x, player.y, "http://koda.nu/bilder/immortal.png") // bild för spelaren
+ 
+        // Nedan så gör jag så att det blir oändliga zombies och att kill countern fungerar.
+
+      for (var i = 0; i < zombies.length; i++)
+      {
+        var zombie = zombies[i];
+      
+        if (zombie.dead) { continue; }
+      
+        zombie.update();
+      
+        if (keyboard.space && distance(mouse, zombie)<30)
+        {
+          zombiesKilled++;
+          circle(mouse.x, mouse.y, 15, "red");
+          zombie.dead = true;
+        }
+      
+        // gör så att man kan förlora.
+        if (distance(zombie, player) < 5)
+        {
+          text(100, 200, 200, "Game over!", "red");
+          showMouse();
+          stopUpdate();
+          
+        }
+      
+      }
+    
+    // visar kill countern.
+      text(10, 45, 15, "Zombies killed: "+ zombiesKilled, "white");
+    
+      if (random(10) == 0) { zombies.push(new Zombie()); }
+    
+      crosshair();
+      if (keyboard.space)
+        gunshot();
+    }
+   
+  </script>
+ 
+
