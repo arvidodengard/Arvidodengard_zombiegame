@@ -1,0 +1,7 @@
+1. Skapa player.
+2. skapa enemies.
+3. gör så att man kan skjuta
+4. zombie bild.
+4. mus bild.
+7. gör så att man kan förlora.
+8. Gör en menu
